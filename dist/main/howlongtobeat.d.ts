@@ -1,3 +1,4 @@
+import { SearchOptions } from './hltbsearch';
 export declare class HowLongToBeatService {
     private hltb;
     constructor();
@@ -8,6 +9,7 @@ export declare class HowLongToBeatService {
      */
     detail(gameId: string, signal?: AbortSignal): Promise<HowLongToBeatEntry>;
     search(query: string, signal?: AbortSignal): Promise<Array<HowLongToBeatEntry>>;
+    searchWithOptions(query: string, searchOptions?: SearchOptions, signal?: AbortSignal): Promise<Array<HowLongToBeatEntry>>;
     /**
      * Calculates the similarty of two strings based on the levenshtein distance in relation to the string lengths.
      * It is used to see how similar the search term is to the game name. This, of course has only relevance if the search term is really specific and matches the game name as good as possible.

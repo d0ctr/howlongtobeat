@@ -1,3 +1,9 @@
+export declare type SearchOptions = {
+    year: number;
+} | {
+    minYear: number;
+    maxYear: number;
+};
 /**
  * Takes care about the http connection and response handling
  */
@@ -9,4 +15,5 @@ export declare class HltbSearch {
     payload: any;
     detailHtml(gameId: string, signal?: AbortSignal): Promise<string>;
     search(query: Array<string>, signal?: AbortSignal): Promise<any>;
+    searchWithOptions(query: Array<string>, searchOptions?: SearchOptions, signal?: AbortSignal): Promise<any>;
 }

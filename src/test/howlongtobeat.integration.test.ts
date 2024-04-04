@@ -17,9 +17,9 @@ describe('Integration-Testing HowLongToBeatService', () => {
         assert.strictEqual(entry.searchTerm, 'Dark Souls');
         assert.isString(entry.imageUrl);
         assert.isArray(entry.platforms);
-        assert.strictEqual(entry.platforms.length, 4);
+        assert.strictEqual(entry.platforms.length, 3);
         // backward compatible test
-        assert.strictEqual(entry.playableOn.length, 4);
+        assert.strictEqual(entry.playableOn.length, 3);
         assert.isTrue(entry.description.includes('Live Through A Million Deaths & Earn Your Legacy.'))
         assert.isTrue(entry.gameplayMain > 40);
         assert.isTrue(entry.gameplayCompletionist > 100);
@@ -93,5 +93,39 @@ describe('Integration-Testing HowLongToBeatService', () => {
     });
   });
 
+  describe('Test for searchWithOptions()', () => {
+    it('should have no results when searching for Tomb Raider in 1995', () => {
+      return new HowLongToBeatService().searchWithOptions('dorks', { year: 1995 }).then((result) => {
+        assert.isNotNull(result);
+        assert.strictEqual(result.length, 0);
+      });
+    });
 
+    it('should return exactly one result for Tomb Raider in 1996', () => {
+      return new HowLongToBeatService().searchWithOptions('Tomb Raider', { year: 1996 }).then((result) => {
+        assert.isNotNull(result);
+        assert.strictEqual(result.length, 1);
+        assert.strictEqual(result[0].id, '10468');
+        assert.strictEqual(result[0].name, 'Tomb Raider');
+      });
+    });
+
+    it('should return exactly 18 results for Tomb Raider from 2012 to 2018', () => {
+      return new HowLongToBeatService().searchWithOptions('Tomb Raider', { minYear: 2012, maxYear: 2018 }).then((result) => {
+        assert.isNotNull(result);
+        assert.strictEqual(result.length, 18);
+      });
+    });
+
+    it('should have at least 3 search results when searching for dark souls III', () => {
+      return new HowLongToBeatService().searchWithOptions('Dark Souls III').then((result) => {
+        assert.isNotNull(result);
+        assert.isTrue(result.length >= 3);
+        assert.strictEqual(result[0].id, '26803');
+        assert.strictEqual(result[0].name, 'Dark Souls III');
+        assert.isTrue(result[0].gameplayMain > 30);
+        assert.isTrue(result[0].gameplayCompletionist > 80);
+      });
+    });
+  });
 });

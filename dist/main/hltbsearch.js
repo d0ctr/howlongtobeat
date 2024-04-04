@@ -30,6 +30,10 @@ class HltbSearch {
                         "min": 0,
                         "max": 0
                     },
+                    "rangeYear": {
+                        "min": null,
+                        "max": null
+                    },
                     "gameplay": {
                         "perspective": "",
                         "flow": "",
@@ -74,9 +78,23 @@ class HltbSearch {
     }
     search(query, signal) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Use built-in javascript URLSearchParams as a drop-in replacement to create axios.post required data param
+            return this.searchWithOptions(query, null, signal);
+        });
+    }
+    searchWithOptions(query, searchOptions, signal) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Use built-in javascript URLSearchOptions as a drop-in replacement to create axios.post required data param
             let search = Object.assign({}, this.payload);
             search.searchTerms = query;
+            if (searchOptions != null) {
+                if ('year' in searchOptions) {
+                    search.searchOptions.games.rangeYear.min = searchOptions.year;
+                }
+                else if ('minYear' in searchOptions && 'maxYear' in searchOptions) {
+                    search.searchOptions.games.rangeYear.min = searchOptions.minYear;
+                    search.searchOptions.games.rangeYear.max = searchOptions.maxYear;
+                }
+            }
             try {
                 let result = yield axios.post(HltbSearch.SEARCH_URL, search, {
                     headers: {

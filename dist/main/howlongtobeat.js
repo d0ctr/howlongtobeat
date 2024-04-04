@@ -29,8 +29,13 @@ class HowLongToBeatService {
     }
     search(query, signal) {
         return __awaiter(this, void 0, void 0, function* () {
+            return this.searchWithOptions(query, null, signal);
+        });
+    }
+    searchWithOptions(query, searchOptions, signal) {
+        return __awaiter(this, void 0, void 0, function* () {
             let searchTerms = query.split(' ');
-            let search = yield this.hltb.search(searchTerms, signal);
+            let search = yield this.hltb.searchWithOptions(searchTerms, searchOptions, signal);
             // console.log(`Found ${search.count} results`);
             let hltbEntries = new Array();
             for (const resultEntry of search.data) {

@@ -1,7 +1,7 @@
 const cheerio = require('cheerio');
 const levenshtein = require('fast-levenshtein');
 
-import { HltbSearch } from './hltbsearch';
+import { HltbSearch, SearchOptions } from './hltbsearch';
 
 export class HowLongToBeatService {
   private hltb: HltbSearch = new HltbSearch();
@@ -23,9 +23,14 @@ export class HowLongToBeatService {
   }
 
   async search(query: string, signal?: AbortSignal): Promise<Array<HowLongToBeatEntry>> {
+    return this.searchWithOptions(query, null, signal);
+  }
+
+  async searchWithOptions(query: string, searchOptions?: SearchOptions, signal?: AbortSignal): Promise<Array<HowLongToBeatEntry>> {
     let searchTerms = query.split(' ');
-    let search = await this.hltb.search(
+    let search = await this.hltb.searchWithOptions(
       searchTerms,
+      searchOptions,
       signal
     );
     // console.log(`Found ${search.count} results`);

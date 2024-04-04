@@ -1,6 +1,12 @@
 const axios: any = require('axios');
 const UserAgent: any = require('user-agents');
 
+export type SearchOptions = {
+  year: number
+} | {
+  minYear: number,
+  maxYear: number
+};
 
 /**
  * Takes care about the http connection and response handling
@@ -27,6 +33,10 @@ export class HltbSearch {
         "rangeTime": {
           "min": 0,
           "max": 0
+        },
+        "rangeYear": {
+          "min": null,
+          "max": null
         },
         "gameplay": {
           "perspective": "",
@@ -67,11 +77,23 @@ export class HltbSearch {
       }
     }
   }
-
   async search(query: Array<string>, signal?: AbortSignal): Promise<any> {
-    // Use built-in javascript URLSearchParams as a drop-in replacement to create axios.post required data param
+    return this.searchWithOptions(query, null, signal);
+  }
+
+  async searchWithOptions(query: Array<string>, searchOptions?: SearchOptions, signal?: AbortSignal): Promise<any> {
+    // Use built-in javascript URLSearchOptions as a drop-in replacement to create axios.post required data param
     let search = { ...this.payload };
     search.searchTerms = query;
+    if (searchOptions != null) {
+      if ('year' in searchOptions) {
+        search.searchOptions.games.rangeYear.min = searchOptions.year;
+      }
+      else if ('minYear' in searchOptions && 'maxYear' in searchOptions) {
+        search.searchOptions.games.rangeYear.min = searchOptions.minYear;
+        search.searchOptions.games.rangeYear.max = searchOptions.maxYear;
+      }
+    }
     try {
       let result =
         await axios.post(HltbSearch.SEARCH_URL, search, {
