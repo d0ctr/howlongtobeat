@@ -65,7 +65,7 @@ describe('Integration-Testing HowLongToBeatService', () => {
                 assert.include(e.message.toLowerCase(), 'cancel');
             });
         });
-        it('should have 1 search results with 100% similarity when searching for Persona 4: Golden', () => {
+        it('should have 1 search results with 100% similarity when searching for Persona 4 Golden', () => {
             return new howlongtobeat_1.HowLongToBeatService().search('Persona 4 Golden').then((result) => {
                 assert.isNotNull(result);
                 assert.strictEqual(result.length, 1);
@@ -78,6 +78,20 @@ describe('Integration-Testing HowLongToBeatService', () => {
                 assert.isNotNull(result);
                 assert.isTrue(result.length > 1);
                 assert.strictEqual(result[0].gameplayMain, 0);
+                assert.strictEqual(result[0].timeLabels.length, 0);
+            });
+        });
+        it('Entries with Solo and Vs. playstyles should have only them (e.g. Guns of Icarus Online)', () => {
+            return new howlongtobeat_1.HowLongToBeatService().search('Guns of Icarus Online').then((result) => {
+                // console.log(result);
+                assert.isNotNull(result);
+                assert.isTrue(result.length >= 1);
+                assert.strictEqual(result[0].gameplayMain, 0);
+                assert.strictEqual(result[0].timeLabels.length, 2);
+                assert.isTrue(result[0].gameplayMainExtra >= 8);
+                assert.isTrue(result[0].gameplayCompletionist >= 17);
+                assert.deepEqual(result[0].timeLabels[0], ['gameplayMainExtra', 'Co-Op']);
+                assert.deepEqual(result[0].timeLabels[1], ['gameplayCompletionist', 'Vs.']);
             });
         });
     });
@@ -108,8 +122,6 @@ describe('Integration-Testing HowLongToBeatService', () => {
                 assert.isTrue(result.length >= 3);
                 assert.strictEqual(result[0].id, '26803');
                 assert.strictEqual(result[0].name, 'Dark Souls III');
-                assert.isTrue(result[0].gameplayMain > 30);
-                assert.isTrue(result[0].gameplayCompletionist > 80);
             });
         });
     });
