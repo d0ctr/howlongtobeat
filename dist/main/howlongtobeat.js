@@ -112,7 +112,7 @@ class HowLongToBeatParser {
         let timeLabels = new Array();
         let gameplayMain = 0;
         let gameplayMainExtra = 0;
-        let gameplayComplete = 0;
+        let gameplayCompletionist = 0;
         gameName = $('div[class*=GameHeader_profile_header__]')[0].children[0].data.trim();
         imageUrl = $('div[class*=GameHeader_game_image__]')[0].children[0].attribs.src;
         let liElements = $('div[class*=GameStats_game_times__] li');
@@ -149,11 +149,11 @@ class HowLongToBeatParser {
                 timeLabels.push(['gameplayMainExtra', type]);
             }
             else if (type.startsWith('Completionist') || type.startsWith('Vs.')) {
-                gameplayComplete = time;
-                timeLabels.push(['gameplayComplete', type]);
+                gameplayCompletionist = time;
+                timeLabels.push(['gameplayCompletionist', type]);
             }
         });
-        return new HowLongToBeatEntry(id, gameName, gameDescription, platforms, imageUrl, timeLabels, gameplayMain, gameplayMainExtra, gameplayComplete, 1, gameName);
+        return new HowLongToBeatEntry(id, gameName, gameDescription, platforms, imageUrl, timeLabels, gameplayMain, gameplayMainExtra, gameplayCompletionist, 1, gameName);
     }
     /**
      * Utility method used for parsing a given input text (like

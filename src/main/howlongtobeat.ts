@@ -122,7 +122,7 @@ export class HowLongToBeatParser {
     let timeLabels: Array<string[]> = new Array<string[]>();
     let gameplayMain = 0;
     let gameplayMainExtra = 0;
-    let gameplayComplete = 0;
+    let gameplayCompletionist = 0;
 
     gameName = $('div[class*=GameHeader_profile_header__]')[0].children[0].data.trim();
     imageUrl = $('div[class*=GameHeader_game_image__]')[0].children[0].attribs.src;
@@ -167,8 +167,8 @@ export class HowLongToBeatParser {
         gameplayMainExtra = time;
         timeLabels.push(['gameplayMainExtra', type]);
       } else if (type.startsWith('Completionist') || type.startsWith('Vs.')) {
-        gameplayComplete = time;
-        timeLabels.push(['gameplayComplete', type]);
+        gameplayCompletionist = time;
+        timeLabels.push(['gameplayCompletionist', type]);
       }
     });
 
@@ -181,7 +181,7 @@ export class HowLongToBeatParser {
       timeLabels,
       gameplayMain,
       gameplayMainExtra,
-      gameplayComplete,
+      gameplayCompletionist,
       1,
       gameName
     );
