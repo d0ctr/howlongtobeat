@@ -42,7 +42,7 @@ export class HowLongToBeatService {
           gameplayMainExtra = 0,
           gameplayCompletionist = 0;
 
-      let timeLabels: Map<string,string> = new Map<string,string>();
+      let timeLabels: Map<'gameplayMain' | 'gameplayMainExtra' | 'gameplayCompletionist',string> = new Map();
 
       let {
         comp_lvl_sp,
@@ -139,7 +139,7 @@ export class HowLongToBeatEntry {
     /* replaces playableOn */
     public readonly platforms: string[],
     public readonly imageUrl: string,
-    public readonly timeLabels: Array<string[]>,
+    public readonly timeLabels: Array<['gameplayMain' | 'gameplayMainExtra' | 'gameplayCompletionist', string]>,
     public readonly gameplayMain: number,
     public readonly gameplayMainExtra: number,
     public readonly gameplayCompletionist: number,
@@ -165,7 +165,7 @@ export class HowLongToBeatParser {
     const $ = cheerio.load(html);
     let gameName = '';
     let imageUrl = '';
-    let timeLabels: Array<string[]> = new Array<string[]>();
+    let timeLabels: Array<['gameplayMain' | 'gameplayMainExtra' | 'gameplayCompletionist', string]> = new Array();
     let gameplayMain = 0;
     let gameplayMainExtra = 0;
     let gameplayCompletionist = 0;
