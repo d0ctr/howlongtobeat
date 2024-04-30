@@ -28,14 +28,14 @@ export declare class HowLongToBeatEntry {
     readonly description: string;
     readonly platforms: string[];
     readonly imageUrl: string;
-    readonly timeLabels: Array<string[]>;
+    readonly timeLabels: Array<['gameplayMain' | 'gameplayMainExtra' | 'gameplayCompletionist', string]>;
     readonly gameplayMain: number;
     readonly gameplayMainExtra: number;
     readonly gameplayCompletionist: number;
     readonly similarity: number;
     readonly searchTerm: string;
     readonly playableOn: string[];
-    constructor(id: string, name: string, description: string, platforms: string[], imageUrl: string, timeLabels: Array<string[]>, gameplayMain: number, gameplayMainExtra: number, gameplayCompletionist: number, similarity: number, searchTerm: string);
+    constructor(id: string, name: string, description: string, platforms: string[], imageUrl: string, timeLabels: Array<['gameplayMain' | 'gameplayMainExtra' | 'gameplayCompletionist', string]>, gameplayMain: number, gameplayMainExtra: number, gameplayCompletionist: number, similarity: number, searchTerm: string);
 }
 /**
  * Internal helper class to parse html and create a HowLongToBeatEntry
