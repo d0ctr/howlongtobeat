@@ -1,5 +1,6 @@
 const axios: any = require('axios');
 const UserAgent: any = require('user-agents');
+const cheerio = require('cheerio');
 
 export type SearchOptions = {
   year: number
@@ -14,7 +15,7 @@ export type SearchOptions = {
 export class HltbSearch {
   public static BASE_URL: string = 'https://howlongtobeat.com/';
   public static DETAIL_URL: string = `${HltbSearch.BASE_URL}game?id=`;
-  public static SEARCH_URL: string = `${HltbSearch.BASE_URL}api/search`;
+  public static BASE_SEARCH_URL: string = `${HltbSearch.BASE_URL}api/search`;
   public static IMAGE_URL: string = `${HltbSearch.BASE_URL}games/`;
 
   payload: any = {
@@ -95,8 +96,12 @@ export class HltbSearch {
       }
     }
     try {
-      let result =
-        await axios.post(HltbSearch.SEARCH_URL, search, {
+      let searchURLAppendix = await this.getSearchURLAppendix(false);
+      if (searchURLAppendix === null ) {
+        searchURLAppendix = await this.getSearchURLAppendix(true);
+      }
+        let result =
+        await axios.post(HltbSearch.BASE_SEARCH_URL + "/" + searchURLAppendix, search, {
           headers: {
             'User-Agent': new UserAgent().toString(),
             'content-type': 'application/json',
@@ -118,4 +123,61 @@ export class HltbSearch {
       }
     }
   }
+
+  // written based on https://github.com/ScrappyCocco/HowLongToBeat-PythonAPI/pull/26
+  async getSearchURLAppendix(parseAllScripts: boolean): Promise<string | null> {
+    try {
+      const resp = await axios.get(HltbSearch.BASE_URL, {
+        headers: {
+          'User-Agent': new UserAgent().toString(),
+          'origin': 'https://howlongtobeat.com',
+          'referer': 'https://howlongtobeat.com'
+        },
+      });
+
+      if (resp.status === 200 && resp.data) {
+        // Parse the HTML content using cheerio
+        const $ = cheerio.load(resp.data);
+        const scripts = $('script[src]');
+        let matchingScripts: string[];
+
+        if (parseAllScripts) {
+          matchingScripts = scripts.map((_, script) => $(script).attr('src')).get() as string[];
+        } else {
+          matchingScripts = scripts
+            .map((_, script) => $(script).attr('src'))
+            .get()
+            .filter(src => src && src.includes('_app-')) as string[];
+        }
+
+        for (let scriptUrl of matchingScripts) {
+          scriptUrl = HltbSearch.BASE_URL + scriptUrl;
+          const scriptResp = await axios.get(scriptUrl, {
+            headers: {
+              'User-Agent': new UserAgent().toString(),
+              'origin': 'https://howlongtobeat.com',
+              'referer': 'https://howlongtobeat.com'
+            },
+
+          });
+          if (scriptResp.status === 200 && scriptResp.data) {
+            const pattern = /"\/api\/search\/".concat\("([a-zA-Z0-9]+)"\)/g;
+            const matches = scriptResp.data.match(pattern);
+
+            if (matches) {
+              return matches.map(match => {
+                const regex = /"\/api\/search\/".concat\("([a-zA-Z0-9]+)"\)/;
+                const result = regex.exec(match);
+                return result ? result[1] : null;
+              }).find(Boolean); // Return first non-null match
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error in sending request:', error);
+    }
+    return null;
+  }
 }
+
